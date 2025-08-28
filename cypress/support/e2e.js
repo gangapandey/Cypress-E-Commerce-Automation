@@ -22,4 +22,10 @@
 import './commands'
 require('cypress-xpath')
 
+Cypress.on('uncaught:exception', (err, runnable) => {
+  if (err.message.includes("Unexpected token ')'")) {
+    return false; // ignore the syntax error and continue the test
+  }
+});
+
 

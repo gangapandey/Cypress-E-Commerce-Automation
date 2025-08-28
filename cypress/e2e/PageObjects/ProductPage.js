@@ -5,8 +5,13 @@ class ProductPage
         productsMenu: "a[href='/products']",
         searchInput: "#search_product",
         searchButton: "#submit_search",
-        firstSearchResult: "body > section:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > a:nth-child(4)",
-        viewCartLink: "body > section:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(2) > a:nth-child(1) > u:nth-child(1)"
+        firstSearchResult: ".productinfo .add-to-cart",
+        viewCartLink: 'a[href="/view_cart"]',
+        productWrapper: ".features_items .product-image-wrapper",
+        addToCartBtn: ".productinfo .add-to-cart",
+        quantityInput: "#quantity",
+        addToCartDetailBtn: "button.cart",
+        modalCloseBtn: ".btn.btn-success.close-modal.btn-block"
     }
 
     openProducts() 
@@ -18,19 +23,63 @@ class ProductPage
     {
         cy.get(this.elements.searchInput).clear().type(term)   //jeans
         cy.get(this.elements.searchButton).click()
-        cy.get(".title.text-center").should('have.tetx', 'Searched Products')
+        cy.get(".title.text-center").should('have.text', 'Searched Products')
     }
 
     addFirstResultToCart() 
     {
-        // try clicking the visible Add to cart button for the first product
         cy.get(this.elements.firstSearchResult).first().within(() =>
             {
-                cy.contains('Add to cart').click({ force: true })
+                cy.contains('Add to cart').first().click({ force: true })
             })
-        // confirm modal by clicking View Cart
-        cy.contains('View Cart').click()
+        cy.contains('Continue Shopping').should('be.visible').click();
     }
+
+
+    navigateToCategory(mainCategory, subCategory)
+    {
+        cy.contains('a', mainCategory).click();
+        cy.contains('a', subCategory).click();
+    }
+
+    addFirstCategoryProductToCart()
+    {
+        cy.get(this.elements.productWrapper)
+            .first()
+            .find(this.elements.addToCartBtn)
+            .click({force:true})
+
+        cy.get(this.elements.modalCloseBtn)
+            .click({ force: true });
+
+        cy.contains('Continue Shopping').should('be.visible').click();
+        
+
+        cy.get('#cartModal').should('not.exist')
+    }
+
+    // openFirstCategoryProductDetail() 
+    // {
+    //     cy.get(this.elements.productWrapper)
+    //         .first()
+    //         .find('a[href*="/product_details"]')  //  "View Product"
+    //         .click({ force: true });
+    // }
+
+    // setQuantityAndAddToCart(quantity) 
+    // {
+    //     cy.get(this.elements.quantityInput).clear().type(quantity)
+    //     cy.get(this.elements.addToCartDetailBtn).click({ force: true })
+    //     cy.contains('View Cart').click()
+    // }
+
+    // openProductDetailByIndex(index = 0) 
+    // {
+    //     cy.get(this.elements.productWrapper)
+    //         .eq(index)
+    //         .find('a[href*="/product_details"]')
+    //         .click()
+    // }
 }
 
 
