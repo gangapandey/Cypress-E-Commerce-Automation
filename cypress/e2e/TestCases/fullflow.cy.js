@@ -3,6 +3,7 @@ const RegisterPage = require('../PageObjects/RegisterPage');
 const LoginPage = require('../PageObjects/LoginPage');
 const ProductPage = require('../PageObjects/ProductPage');
 const CartPage = require('../PageObjects/CartPage');
+const CheckoutPage = require('../PageObjects/CheckoutPage');
 
 const { generateUser } = require('../../fixtures/testData');
 
@@ -13,6 +14,7 @@ describe('E2E Full Flow: Register → Login → Product Search → Add to Cart �
         const loginPage = new LoginPage();
         const productPage = new ProductPage();
         const cartPage = new CartPage();
+        const checkoutPage = new CheckoutPage();
 
         // Generate user from fixture helper
         const user = generateUser();
@@ -58,27 +60,19 @@ describe('E2E Full Flow: Register → Login → Product Search → Add to Cart �
                 cartPage.openCart()
                 cartPage.assertItemCount(3)
 
+                cartPage.openFirstItemDetail();
                 cartPage.updateQuantityAndReturnToCart(2);
 
-                cartPage.proceedToCheckout()
-                //cartPage.getItemTotalPrice(799)
+                cartPage.proceedToCheckout();
                
 
-                // 4) Checkout
-                // cartPage.verifyProductInCart(productName);
-                // cartPage.proceedToCheckout();
-                // checkoutPage.verifyDeliveryAddress(user.firstName);
-                // checkoutPage.placeOrder({
-                //     nameOnCard: `${user.firstName} ${user.lastName}`,
-                //     cardNumber: Cypress._.random(1000000000000000, 9999999999999999).toString(), // random 16-digit
-                //     cvc: Cypress._.random(100, 999).toString(),
-                //     expMonth: `${Cypress._.random(1, 12)}`,
-                //     expYear: `${Cypress._.random(2026, 2032)}`
-                // });
-                // checkoutPage.verifyOrderSuccess();
+               // 4. Checkout
+               checkoutPage.validateAddressDetails(user); 
+               checkoutPage.validateOrderSummary(3); 
+               checkoutPage.validateTotalPrice(); 
 
-                // 5) Logout
-                // homePage.clickLogout();
-                // homePage.verifyLoggedOut();
+               checkoutPage.placeOrder(); 
+
+              
             });
 });

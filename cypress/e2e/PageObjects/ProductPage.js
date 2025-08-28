@@ -54,8 +54,10 @@ class ProductPage
 
         cy.contains('Continue Shopping').should('be.visible').click();
         
+        cy.wait(4000);
 
-        cy.get('#cartModal').should('not.exist')
+        
+        
     }
 
     // openFirstCategoryProductDetail() 

@@ -11,8 +11,9 @@ class CartPage
 
     openCart() 
     {
-        cy.get('a[href="/view_cart"]').click()
+        cy.contains('a[href="/view_cart"]', 'Cart').click()
     }
+
 
     assertItemCount(expectedCount) 
     {
@@ -23,13 +24,10 @@ class CartPage
     {
         cy.get(this.elements.cartRows)
             .first()
-            .find('a')
-            .first() 
-            .invoke('attr', 'href')
-            .then((href) => {
-                cy.visit(href)  // navigate to product detail page
-        })
+            .find('a[href*="/product_details"]')  // adjust selector to match product detail link
+            .click({ force: true })
     }
+
 
     updateQuantityAndReturnToCart(quantity = 3) 
     {
