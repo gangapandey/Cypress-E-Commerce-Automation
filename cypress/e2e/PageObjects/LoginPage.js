@@ -22,6 +22,14 @@ class LoginPage
     {
         cy.get(this.elements.loginButton).click()
     }
+
+    login(email, password) {
+        this.fillCredentials(email, password);
+        this.submit();
+
+        // Assertion after login (to confirm success)
+        cy.contains('Logged in as').should('be.visible');
+    }
 }
 
 

@@ -20,6 +20,7 @@ Cypress.Commands.add('loginUI', (email, password) =>
     login.openLogin();
     login.fillCredentials(email, password)
     login.submit()
+    cy.contains('Logged in as').should('be.visible');
 })
 
 Cypress.Commands.add('addProductToCart', (productName) => 
@@ -37,6 +38,12 @@ Cypress.Commands.add('uniqueEmail', (prefix = 'test') =>
         const ts = Date.now()
         return `${prefix}_${ts}@example.com`
     })
+
+Cypress.Commands.add('preserveLogin', (email, password) => {
+  cy.session([email, password], () => {
+    cy.loginUI(email, password); // your POM-based login command
+  });
+});
 
 
 module.exports = {}   

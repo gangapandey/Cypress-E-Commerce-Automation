@@ -2,7 +2,7 @@ class RegisterPage
 {
     elements =
     {
-        nameInput: "input[placeholder='Name']",
+        nameInput: "input[data-qa='signup-name']",
         emailInput: "input[data-qa='signup-email']",
         signupButton: "button[data-qa='signup-button']",
         titleMr: "#id_gender1",
