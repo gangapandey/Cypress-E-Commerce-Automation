@@ -82,6 +82,8 @@ describe('E2E Full Flow: Register → Login → Product Search → Add to Cart �
             cartPage.openFirstItemDetail();
             cartPage.updateQuantityAndReturnToCart(2);
 
+            cartPage.deleteLastItemAndValidateTotal();
+
             cartPage.proceedToCheckout();
         })
 

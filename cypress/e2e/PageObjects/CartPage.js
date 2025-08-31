@@ -36,15 +36,50 @@ class CartPage
         cy.contains('View Cart').click()  
     }
 
-    deleteItemById(productId) 
+    getCartTotal() 
     {
-        cy.get(`${this.elements.deleteBtn}[data-product-id="${productId}"]`).click()
+        return cy.get(this.elements.cartTotalPrice).last().invoke('text').then((text) => 
+            {
+                return parseFloat(text.replace(/[^0-9.]/g, ''))
+            })
     }
+
+    
+   // Delete last item and validate total amount and item
+    deleteLastItemAndValidateTotal() {
+    const cleanNumber = (text) => parseInt(text.replace(/[^0-9]/g, ''), 10);
+
+    // Get previous total
+    cy.get(this.elements.cartTotalPrice).last().invoke('text').then((totalText) => {
+        const previousTotal = cleanNumber(totalText);
+
+        // Get last item's price
+        cy.get(this.elements.cartRows).last()
+          .find('td.cart_total')   // adjust if selector differs
+          .invoke('text').then((itemText) => {
+            const lastItemPrice = cleanNumber(itemText);
+
+            // Delete last item
+            cy.get(this.elements.cartRows).last()
+              .find('a.cart_quantity_delete').click();
+
+            // Assert new total
+            cy.get(this.elements.cartTotalPrice).last().invoke('text').then((newTotalText) => {
+                const newTotal = cleanNumber(newTotalText);
+                expect(newTotal).to.eq(previousTotal - lastItemPrice);
+            });
+        });
+    });
+}
+
+
+    
 
     proceedToCheckout() 
     {
         cy.get(this.elements.proceedToCheckout).click()
     }
+
 
     
 }
