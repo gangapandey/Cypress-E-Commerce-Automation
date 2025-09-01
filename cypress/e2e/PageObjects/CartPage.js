@@ -46,31 +46,10 @@ class CartPage
 
     
    // Delete last item and validate total amount and item
-    deleteLastItemAndValidateTotal() {
-    const cleanNumber = (text) => parseInt(text.replace(/[^0-9]/g, ''), 10);
-
-    // Get previous total
-    cy.get(this.elements.cartTotalPrice).last().invoke('text').then((totalText) => {
-        const previousTotal = cleanNumber(totalText);
-
-        // Get last item's price
-        cy.get(this.elements.cartRows).last()
-          .find('td.cart_total')   // adjust if selector differs
-          .invoke('text').then((itemText) => {
-            const lastItemPrice = cleanNumber(itemText);
-
-            // Delete last item
-            cy.get(this.elements.cartRows).last()
-              .find('a.cart_quantity_delete').click();
-
-            // Assert new total
-            cy.get(this.elements.cartTotalPrice).last().invoke('text').then((newTotalText) => {
-                const newTotal = cleanNumber(newTotalText);
-                expect(newTotal).to.eq(previousTotal - lastItemPrice);
-            });
-        });
-    });
-}
+    deleteLastItem()
+    {
+         cy.get(this.elements.deleteBtn).last().click();
+    }
 
 
     

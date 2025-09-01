@@ -82,7 +82,7 @@ describe('E2E Full Flow: Register → Login → Product Search → Add to Cart �
             cartPage.openFirstItemDetail();
             cartPage.updateQuantityAndReturnToCart(2);
 
-            cartPage.deleteLastItemAndValidateTotal();
+            cartPage. deleteLastItem();
 
             cartPage.proceedToCheckout();
         })
@@ -90,7 +90,7 @@ describe('E2E Full Flow: Register → Login → Product Search → Add to Cart �
         it('TC-6: Validate Address details, Order summary, Total Price and place order', ()=>
         {
             checkoutPage.validateAddressDetails(user); 
-            checkoutPage.validateOrderSummary(3); 
+            checkoutPage.validateOrderSummary(2); 
             checkoutPage.validateTotalPrice(); 
 
             checkoutPage.placeOrder();

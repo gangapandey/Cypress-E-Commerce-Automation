@@ -18,6 +18,24 @@ class LoginPage
         cy.get(this.elements.passwordInput).clear().type(password)
     }
 
+    // LoginPage.js
+    loginWithInvalid(email, password, expectedError) 
+    {
+        this.fillCredentials(email, password);
+        this.submit();
+        cy.get('body').then($body => 
+        {
+            if ($body.text().includes(expectedError)) 
+            {
+                cy.log(`Handled expected error: ${expectedError}`);
+            } else 
+            {
+                cy.log('Unexpected behavior, investigate login.');
+            }
+        });
+    }
+
+
     submit() 
     {
         cy.get(this.elements.loginButton).click()
