@@ -9,8 +9,17 @@ const LogoutPage = require('../PageObjects/LogoutPage');
 
 const { generateUser } = require('../../fixtures/testData');
 
+ // Generate user from fixture helper
+let user;
+       
+before(()=>
+{
+    user = generateUser();
+    Cypress.env('registeredUser', user);
+})
 
-describe('E2E Full Flow: Register → Login → Product Search → Add to Cart → Checkout → Logout', () => 
+
+describe('E2E Full Flow', () => 
     {
         const homePage = new HomePage();
         const registerPage = new RegisterPage();
@@ -21,20 +30,15 @@ describe('E2E Full Flow: Register → Login → Product Search → Add to Cart �
         const paymentPage = new PaymentPage();
         const logoutPage = new LogoutPage();
 
-        // Generate user from fixture helper
-        let user;
-        const productName = 'Blue Top'; // example product
-        before(()=>
-        {
-            user = generateUser();
-            Cypress.env('registeredUser', user);
-        })
+        let productName = 'Blue Top';
 
         
         it('TC-1: Navigate to the Home Page', ()=>
         {
             homePage.open();
+            cy.url().should('include', '/');
             homePage.opensignup();
+            cy.get('h2').should('contain.text', 'Signup');
         })
 
         it('TC-2: Register new user ', ()=>
@@ -117,6 +121,7 @@ describe('E2E Full Flow: Register → Login → Product Search → Add to Cart �
             homePage.opensignup();
             loginPage.login(savedUser.email, savedUser.password);
             logoutPage.assertReLoginSuccess(savedUser.firstName);
+            logoutPage.clickLogout();
         })
 
         after(() => 
@@ -140,5 +145,116 @@ describe('E2E Full Flow: Register → Login → Product Search → Add to Cart �
 
 
 });
+
+
+
+describe('Negative Tests - Auth & Registration', () => 
+{
+    const homePage = new HomePage();
+    const registerPage = new RegisterPage();
+    const loginPage = new LoginPage();
+
+    it('TC-10: Validate showing error for invalid email format', () => 
+    {
+        homePage.opensignup();
+        loginPage.login('test@com', 'ValidPass123');
+        cy.contains('Your email or password is incorrect!').should('be.visible');
+    });
+
+    loginPage.loginWithEmptyPassword = (email) => 
+    {
+        cy.get(loginPage.elements.emailInput).clear().type(email);
+        cy.get(loginPage.elements.passwordInput).clear(); 
+    };
+
+    it('TC-11: Validate error for empty password field', () => 
+    {
+        homePage.opensignup();
+        loginPage.loginWithEmptyPassword('user@email.com');
+        loginPage.submit();
+        cy.contains('Logged in as').should('not.exist');
+    });
+
+    it('TC-12: Validate duplicate email registration', () => 
+    {
+        registerPage.startRegistration(user.firstName, user.email);
+        cy.contains('Email Address already exist!').should('be.visible');
+        cy.contains('Logged in as').should('not.exist');
+    });
+
+});
+
+
+describe('Negative Tests - Product & Cart', () => 
+{
+    const productPage = new ProductPage();
+    const cartPage = new CartPage();
+    const loginPage = new LoginPage();
+    const homePage = new HomePage();
+
+    beforeEach(() => 
+    {
+        // Login a valid user before each cart/product test
+        const savedUser = Cypress.env('registeredUser');
+        homePage.opensignup();
+        loginPage.login(savedUser.email, savedUser.password);
+    });
+
+    it('TC-13: Validate message for non-existent product search', () => 
+    {
+        productPage.openProducts();
+        productPage.search('Topi');
+
+        cy.get('.product-item').should('have.length', 0);
+    });
+
+    it('TC-14: Validate checkout with empty cart', () => 
+    {
+        cartPage.openCart();
+        cartPage.deleteAllItems();
+        cartPage.proceedToCheckout();
+        cy.contains('Cart is empty').should('be.visible');
+    });
+});
+
+
+describe('Negative Tests - Checkout & Payment', () => 
+{
+    const checkoutPage = new CheckoutPage();
+    const paymentPage = new PaymentPage();
+    const productPage = new ProductPage();
+    const cartPage = new CartPage();
+
+    beforeEach(() => 
+    {
+        // Ensure at least one product is in cart
+        productPage.openProducts();
+        productPage.search('Blue Top');
+        productPage.addFirstResultToCart();
+        cartPage.openCart();
+        cartPage.proceedToCheckout();
+        checkoutPage.placeOrder();
+    });
+
+    it('TC-15: Validate rejecting invalid payment card number', () => 
+    {
+        paymentPage.fillPaymentDetails('12345', '123', '12/30');
+        paymentPage.payAndConfirmOrder();
+        cy.contains('Invalid card number').should('be.visible');
+    });
+
+    it('TC-16:Validate rejecting expired card', () => 
+    {
+        paymentPage.fillPaymentDetails('4111111111111111', '123', '01/00');
+        paymentPage.payAndConfirmOrder();
+        cy.contains('Card expired').should('be.visible');
+    });
+
+});
+
+
+
+
+
 
 

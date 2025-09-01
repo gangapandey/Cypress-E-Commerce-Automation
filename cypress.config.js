@@ -6,14 +6,25 @@ module.exports = defineConfig({
     specPattern: 'cypress/e2e/TestCases/*.cy.js',
     supportFile: 'cypress/support/e2e.js',
     testIsolation: false,
-    //experimentalSessionAndOrigin: true, // optional for session management
-    video: false,
+    experimentalSessionAndOrigin: true,
+    video: true,
+    screenshotOnRunFailure: true,
 
     setupNodeEvents(on, config) {
-      // implement node event listeners here
-        return config
-    },
-    video:false,
-    
+      // Add Mochawesome reporter
+      on('after:run', (results) => {
+        console.log('Cypress run finished!');
+      });
+
+      return config;
+    }
   },
+
+  reporter: 'mochawesome',  // <-- add this
+  reporterOptions: {
+    reportDir: 'cypress/reports',  // folder where reports will be saved
+    overwrite: true,
+    html: true,   // generate HTML report
+    json: true    // generate JSON report too
+  }
 });

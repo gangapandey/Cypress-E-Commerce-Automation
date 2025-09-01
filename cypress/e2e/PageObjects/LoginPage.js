@@ -18,6 +18,7 @@ class LoginPage
         cy.get(this.elements.passwordInput).clear().type(password)
     }
 
+
     // LoginPage.js
     loginWithInvalid(email, password, expectedError) 
     {
@@ -44,9 +45,6 @@ class LoginPage
     login(email, password) {
         this.fillCredentials(email, password);
         this.submit();
-
-        // Assertion after login (to confirm success)
-        cy.contains('Logged in as').should('be.visible');
     }
 }
 
