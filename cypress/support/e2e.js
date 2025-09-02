@@ -38,6 +38,7 @@ Cypress.Commands.add('login', (email, password) => {
   });
 });
 
+import 'cypress-mochawesome-reporter/register';
 
 
 

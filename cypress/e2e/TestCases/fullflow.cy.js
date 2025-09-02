@@ -249,7 +249,7 @@ describe('Negative Tests - Checkout & Payment', () =>
         paymentPage.payAndConfirmOrder();
         cy.contains('Card expired').should('be.visible');
     });
-
+ 
 });
 
 

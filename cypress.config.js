@@ -1,6 +1,14 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
+  reporter: 'cypress-mochawesome-reporter',
+  reporterOptions: {
+    charts: true,
+    reportPageTitle: 'Automation Excersie Automation Report',
+    embeddedScreenshots: true,
+    inlineAssets: true,
+    saveAllAttempts: false,
+  },
   e2e: {
     baseUrl: 'https://automationexercise.com/',
     specPattern: 'cypress/e2e/TestCases/*.cy.js',
@@ -11,20 +19,8 @@ module.exports = defineConfig({
     screenshotOnRunFailure: true,
 
     setupNodeEvents(on, config) {
-      // Add Mochawesome reporter
-      on('after:run', (results) => {
-        console.log('Cypress run finished!');
-      });
-
-      return config;
-    }
+      require('cypress-mochawesome-reporter/plugin')(on);
+      return config;   // ✅ correctly placed
+    },
   },
-
-  reporter: 'mochawesome',  // <-- add this
-  reporterOptions: {
-    reportDir: 'cypress/reports',  // folder where reports will be saved
-    overwrite: true,
-    html: true,   // generate HTML report
-    json: true    // generate JSON report too
-  }
 });
