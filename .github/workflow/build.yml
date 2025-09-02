@@ -1,12 +1,52 @@
 name: Regression End-to-end tests
-on: push
+
+on:
+  push:
+    branches:
+      - main     # adjust if your default branch is different
+  pull_request:
+
 jobs:
   cypress-run:
     runs-on: ubuntu-24.04
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-      # Install npm dependencies, cache them correctly
-      # and run all Cypress tests
-      - name: Cypress run
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
         uses: cypress-io/github-action@v6
+        with:
+          command: npx cypress run
+        env:
+          CI: true
+
+      - name: Generate Mochawesome HTML report
+        if: always()
+        run: |
+          if ls cypress/reports/*.json 1> /dev/null 2>&1; then
+            npx mochawesome-merge cypress/reports/*.json > cypress/reports/report.json
+            npx marge cypress/reports/report.json --reportDir cypress/reports/html --reportTitle "Cypress Test Report"
+          else
+            echo "⚠️ No mochawesome JSON found in cypress/reports"
+          fi
+
+      - name: Upload Cypress artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts
+          path: |
+            cypress/screenshots
+            cypress/videos
+            cypress/reports
+          if-no-files-found: ignore
