@@ -106,9 +106,6 @@ npx cypress open
 
 These tests demonstrate robust error handling and edge case coverage.  
 
-##  Test Execution Video
-
-[Watch full test execution video](https://github.com/<username>/<repo>/blob/main/cypress/videos/fullflow.cy.js.mp4)
 
 
 
