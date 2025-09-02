@@ -1,4 +1,4 @@
-# E-Commerce Automation Project - Cypress POM
+# E-Commerce Automation Project - Automation Exercise
 
 [![Cypress](https://img.shields.io/badge/cypress-12.17.0-brightgreen.svg)](https://www.cypress.io/)
 [![Node.js](https://img.shields.io/badge/node-18+-blue.svg)](https://nodejs.org/)
@@ -109,6 +109,7 @@ These tests demonstrate robust error handling and edge case coverage.
 ##  Test Execution Video
 
 [Watch full test execution video](https://github.com/<username>/<repo>/blob/main/cypress/videos/fullflow.cy.js.mp4)
+
 
 
 
